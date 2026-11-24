@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CompliMed · Pre-submission claim review</title>
+  <meta name="description" content="Work queue for medical coders and billing staff to catch coding, prior-auth and HIPAA issues before claims go out.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f766e'/><path d='M9 16.5l4.5 4.5L23 11.5' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">✓</span>
+      <div>
+        <h1>CompliMed</h1>
+        <p class="tagline">Pre-submission claim review</p>
+      </div>
+    </div>
+
+    <div class="role-switch" role="radiogroup" aria-label="Your role">
+      <span class="role-label">I'm working as</span>
+      <button type="button" role="radio" data-role="coder" aria-checked="true">Coder</button>
+      <button type="button" role="radio" data-role="admin" aria-checked="false">Admin staff</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="toolbar" aria-label="Batch actions">
+      <label class="btn primary">
+        Upload batch
+        <input id="file-input" type="file" accept=".json,.csv" hidden>
+      </label>
+      <button type="button" class="btn" id="load-sample">Load sample batch</button>
+      <button type="button" class="btn" id="export" disabled>Export CSV</button>
+      <button type="button" class="btn ghost" id="clear" disabled>Clear queue</button>    </section>
+
+    <section class="stats" id="stats" aria-label="Queue summary"></section>
+
+    <section class="workspace">
+      <div class="queue-panel">
+        <div class="queue-head">
+          <div class="tabs" role="tablist" id="tabs"></div>
+          <input type="search" id="search" placeholder="Search ID, department, code…" aria-label="Search records">
+        </div>
+        <div class="table-wrap">
+          <table class="queue" aria-label="Record queue">
+            <thead>
+              <tr>
+                <th>Record</th>
+                <th>Department</th>
+                <th>Codes</th>
+                <th>Issues</th>
+                <th>Owner</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <div class="empty" id="empty">
+            <h2>No records in the queue</h2>
+            <p>Upload a JSON or CSV batch, or load the sample batch to try it.</p>
+            <details>
+              <summary>Expected format</summary>
+              <p>JSON: an array of records (or <code>{"record": …}</code> objects). CSV columns:</p>
+              <code class="block">record_id, patient_id_hash, encounter_date, department, provider_id, icd10_codes, cpt_codes, prior_auth_token, clinical_notes</code>
+              <p>Separate multiple codes with <code>;</code>.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <aside class="detail" id="detail" aria-live="polite">
+        <div class="detail-empty">
+          <p>Select a record to review its findings.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <dialog id="override-dialog">
+    <form method="dialog">
+      <h2>Override findings</h2>
+      <p>Explain why this record can be submitted as-is. The reason is kept in the record's history.</p>
+      <textarea id="override-reason" rows="4" required placeholder="e.g. Payer confirmed by phone that no prior auth is needed for this plan."></textarea>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" id="override-cancel">Cancel</button>
+        <button type="submit" class="btn primary" id="override-confirm">Override</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
