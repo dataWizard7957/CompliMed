@@ -4,6 +4,8 @@
 
 Micro1 hackathon
 
+🚀 **Live demo:** [complimed-virid.vercel.app](https://complimed-virid.vercel.app)
+
 ---
 
 ## 🎯 Intended User & The Bottleneck
